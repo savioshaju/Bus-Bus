@@ -9,8 +9,9 @@
   },
   
   "scripts": {
-  "start": "node server.js"
-},
+  "start": "node backend/server.js"
+}
+,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/savioshaju/Bus-Bus.git"
