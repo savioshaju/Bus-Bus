@@ -12,7 +12,7 @@ class AdminApprovalPage extends StatefulWidget {
 
 class _AdminApprovalPageState extends State<AdminApprovalPage> {
   List<dynamic> _pendingUsers = [];
-  bool _isLoading = true; // Add a loading state
+  bool _isLoading = true; // Loading state
 
   @override
   void initState() {
@@ -20,8 +20,9 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
     _fetchPendingUsers();
   }
 
+  /// Fetch pending providers from the backend
   Future<void> _fetchPendingUsers() async {
-    final url = 'http://localhost:5000/admin/pending-providers';
+    const url = 'http://localhost:5000/admin/pending-providers';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString("auth_token");
@@ -45,9 +46,7 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Error: ${response.body}')), // Show exact error message
+          SnackBar(content: Text('Error: ${response.body}')),
         );
       }
     } catch (e) {
@@ -57,8 +56,9 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
     }
   }
 
-  Future<void> _approveUser(int userId) async {
-    final url = 'http://localhost:5000/admin/approve-provider';
+  /// Approve or reject a provider
+  Future<void> _approveUser(int userId, String status) async {
+    const url = 'http://localhost:5000/admin/approve-provider';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString("auth_token");
@@ -75,22 +75,26 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
         Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token" // ✅ Use stored token here
+          "Authorization": "Bearer $token",
         },
-        body: jsonEncode({"userId": userId, "status": "Approved"}),
+        body: jsonEncode({"userId": userId, "status": status}),
       );
+
+      print("Response Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User approved successfully')),
+          SnackBar(content: Text('User $status successfully')),
         );
-        _fetchPendingUsers(); // Refresh list after approval
+        _fetchPendingUsers(); // Refresh list after action
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${response.body}')), // Show exact error
+          SnackBar(content: Text('Error: ${response.body}')),
         );
       }
     } catch (e) {
+      print("Error approving user: $e"); // Log the error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
@@ -104,13 +108,13 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
         title: const Text('Pending Approvals'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh), // ✅ Refresh button
+            icon: const Icon(Icons.refresh), // Refresh button
             onPressed: _fetchPendingUsers,
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator()) // ✅ Show loading indicator
+          ? const Center(child: CircularProgressIndicator()) // Show loading indicator
           : _pendingUsers.isEmpty
               ? const Center(child: Text('No pending approvals'))
               : ListView.builder(
@@ -138,9 +142,22 @@ class _AdminApprovalPageState extends State<AdminApprovalPage> {
                             Text("Address: ${user['address']}",
                                 style: const TextStyle(fontSize: 16)),
                             const SizedBox(height: 10),
-                            ElevatedButton(
-                              onPressed: () => _approveUser(user['id']),
-                              child: const Text("Approve"),
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => _approveUser(user['id'], "Approved"),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green),
+                                  child: const Text("Approve"),
+                                ),
+                                const SizedBox(width: 10),
+                                ElevatedButton(
+                                  onPressed: () => _approveUser(user['id'], "Rejected"),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red),
+                                  child: const Text("Reject"),
+                                ),
+                              ],
                             ),
                           ],
                         ),

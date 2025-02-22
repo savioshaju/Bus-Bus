@@ -11,7 +11,9 @@ analyzer:
   errors:
     avoid_print: ignore
     deprecated_member_use: ignore
+    file_names: ignore
     library_private_types_in_public_api: ignore
+    prefer_interpolation_to_compose_strings: ignore
     unused_element: ignore
     unused_field: ignore
     unused_import: ignore

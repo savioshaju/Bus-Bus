@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
         leading: PopupMenuButton<int>(
           icon: const Icon(Icons.menu, color: Colors.white),
           onSelected: (value) {
+            Navigator.pop(context); // Close menu before navigation
             switch (value) {
               case 1:
                 // Handle Ticket Purchase
@@ -30,7 +31,7 @@ class HomePage extends StatelessWidget {
                 // Handle Settings
                 break;
               case 4:
-                // Handle Profile
+                Navigator.pushNamed(context, '/profile');
                 break;
               case 5:
                 Navigator.pushNamedAndRemoveUntil(
@@ -39,26 +40,11 @@ class HomePage extends StatelessWidget {
             }
           },
           itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 1,
-              child: Text("Ticket Purchase"),
-            ),
-            const PopupMenuItem(
-              value: 2,
-              child: Text("View Bus Locations"),
-            ),
-            const PopupMenuItem(
-              value: 3,
-              child: Text("Settings"),
-            ),
-            const PopupMenuItem(
-              value: 4,
-              child: Text("Profile"),
-            ),
-            const PopupMenuItem(
-              value: 5,
-              child: Text("Logout"),
-            ),
+            const PopupMenuItem(value: 1, child: Text("Ticket Purchase")),
+            const PopupMenuItem(value: 2, child: Text("View Bus Locations")),
+            const PopupMenuItem(value: 3, child: Text("Settings")),
+            const PopupMenuItem(value: 4, child: Text("Profile")),
+            const PopupMenuItem(value: 5, child: Text("Logout")),
           ],
         ),
         title: GestureDetector(
@@ -66,7 +52,8 @@ class HomePage extends StatelessWidget {
             Navigator.pushNamed(context, '/searchpage');
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20.0),
@@ -75,7 +62,8 @@ class HomePage extends StatelessWidget {
               children: [
                 Icon(Icons.search, color: Colors.grey),
                 SizedBox(width: 8.0),
-                Text('Search for Bus Route', style: TextStyle(color: Colors.grey)),
+                Text('Search for Bus Route',
+                    style: TextStyle(color: Colors.grey)),
               ],
             ),
           ),
@@ -111,24 +99,28 @@ class HomePage extends StatelessWidget {
             ),
             // Options Grid
             Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
                   // First Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildOption('Search for Bus Route', context, '/searchpage', Colors.teal, Icons.search),
-                      _buildOption('View Bus Schedule', context, '/schedule', Colors.orange, Icons.schedule),
+                      _buildOption('Search for Bus Route', context,
+                          '/searchpage', Colors.teal, Icons.search),
+                      _buildOption('View Bus Schedule', context, '/schedule',
+                          Colors.orange, Icons.schedule),
                     ],
                   ),
                   const SizedBox(height: 15), // Space between rows
                   // Second Row
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Uniform space between items
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildOption('Favorites or Recent Routes', context, '/favorites', Colors.purple, Icons.favorite),
-                      _buildOption('About Us/Help', context, '/about', Colors.blue, Icons.help),
+                      _buildOption('Favorites or Recent Routes', context,
+                          '/favorites', Colors.purple, Icons.favorite),
+                      _buildOption('About Us/Help', context, '/about',
+                          Colors.blue, Icons.help),
                     ],
                   ),
                 ],
@@ -142,41 +134,42 @@ class HomePage extends StatelessWidget {
 
   Widget _buildTaskBarIcon(IconData iconData, Color color) {
     return Container(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: const BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4.0)],
       ),
-      child: Icon(iconData, color: color, size: 24.0),
+      child: Icon(iconData, color: color, size: 28.0),
     );
   }
 
-  Widget _buildOption(String text, BuildContext context, String route, Color color, IconData iconData) {
+  Widget _buildOption(String text, BuildContext context, String route,
+      Color color, IconData iconData) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, route);
       },
       child: Container(
-        height: 100.0, // Uniform height
-        width: 400.0, // Uniform width
+        height: 120.0,
+        width: MediaQuery.of(context).size.width * 0.4, // Dynamic width
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(20.0),
         ),
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(8.0),
         margin: const EdgeInsets.all(4.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(iconData, color: Colors.white, size: 24.0), // Icon size
-            const SizedBox(height: 4.0),
+            Icon(iconData, color: Colors.white, size: 30.0),
+            const SizedBox(height: 8.0),
             Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 16.0, // Text size
+                fontSize: 14.0,
               ),
             ),
           ],
